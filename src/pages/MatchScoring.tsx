@@ -7,7 +7,6 @@ import {
   checkKumiteWinCondition,
 } from '../utils/scoring';
 import type {
-  Match,
   KataScore,
   KumiteMatch,
   KumitePoint,
@@ -23,12 +22,9 @@ export default function MatchScoring() {
   const kataScores = useStore((state) => state.kataScores);
   const kumiteMatches = useStore((state) => state.kumiteMatches);
   const tournamentRules = useStore((state) => state.tournamentRules);
-  const officialResults = useStore((state) => state.officialResults);
   const addKataScore = useStore((state) => state.addKataScore);
   const addKumiteMatch = useStore((state) => state.addKumiteMatch);
   const updateMatch = useStore((state) => state.updateMatch);
-  const updateKataScore = useStore((state) => state.updateKataScore);
-  const updateKumiteMatch = useStore((state) => state.updateKumiteMatch);
   const addOfficialResult = useStore((state) => state.addOfficialResult);
   const currentUser = useStore((state) => state.currentUser);
 

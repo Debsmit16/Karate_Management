@@ -106,7 +106,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ tournaments, loadingTournaments: false });
   },
   addTournament: async (tournament) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('tournaments')
       .insert({
         name: tournament.name,
@@ -185,7 +185,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ categories: categoriesWithParticipants, loadingCategories: false });
   },
   addCategory: async (category) => {
-    const { data, error } = await supabase
+    const { data: categoryData, error } = await supabase
       .from('categories')
       .insert({
         tournament_id: category.tournamentId,
@@ -205,10 +205,10 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     if (error) throw error;
 
     // Add participants
-    if (category.participantIds.length > 0) {
+    if (category.participantIds.length > 0 && categoryData) {
       await supabase.from('category_participants').insert(
         category.participantIds.map((athleteId) => ({
-          category_id: data.id,
+          category_id: categoryData.id,
           athlete_id: athleteId,
         }))
       );
@@ -267,7 +267,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ teams, loadingTeams: false });
   },
   addTeam: async (team) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('teams')
       .insert({
         name: team.name,
@@ -312,7 +312,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ athletes, loadingAthletes: false });
   },
   addAthlete: async (athlete) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('athletes')
       .insert({
         team_id: athlete.teamId,
@@ -379,7 +379,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ matches, loadingMatches: false });
   },
   addMatch: async (match) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('matches')
       .insert({
         category_id: match.categoryId,
@@ -449,7 +449,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ kataScores, loadingKataScores: false });
   },
   addKataScore: async (score) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('kata_scores')
       .insert({
         match_id: score.matchId,
@@ -516,7 +516,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ kumiteMatches, loadingKumiteMatches: false });
   },
   addKumiteMatch: async (match) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('kumite_matches')
       .insert({
         category_id: match.categoryId,
@@ -589,7 +589,7 @@ export const useSupabaseStore = create<SupabaseState>((set, get) => ({
     set({ officialResults, loadingOfficialResults: false });
   },
   addOfficialResult: async (result) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('official_results')
       .insert({
         category_id: result.categoryId,

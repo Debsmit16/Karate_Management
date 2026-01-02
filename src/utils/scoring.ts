@@ -1,4 +1,4 @@
-import type { KataScore, KumiteMatch, KumitePoint } from '../types';
+import type { KumitePoint } from '../types';
 
 // PRD Section 6.1: Point Values
 const POINT_VALUES: Record<KumitePoint, number> = {

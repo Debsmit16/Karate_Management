@@ -1,7 +1,6 @@
 import type {
   OfficialResult,
   TeamChampionship,
-  TournamentRules,
   Team,
 } from '../types';
 import { calculateTeamPoints } from './scoring';
@@ -23,7 +22,7 @@ export function updateTeamChampionship(
 
   officialResults.forEach((result) => {
     // Find which team this athlete belongs to
-    const athleteTeam = teams.find((team) => {
+    const athleteTeam = teams.find(() => {
       // This would need athlete data - simplified for now
       // In real implementation, we'd have athlete.teamId
       return true; // Placeholder

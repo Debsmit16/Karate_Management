@@ -1,5 +1,4 @@
 import { useStore } from '../store/useStore';
-import type { TeamChampionship } from '../types';
 
 interface TeamLeaderboardProps {
   tournamentId: string;

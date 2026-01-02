@@ -1,7 +1,4 @@
 import { useStore } from '../store/useStore';
-import { Link } from 'react-router-dom';
-import type { Athlete, OfficialResult, TeamChampionship } from '../types';
-import { calculateTeamPoints } from '../utils/scoring';
 
 export default function CoachDashboard() {
   const currentUser = useStore((state) => state.currentUser);

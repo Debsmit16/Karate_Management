@@ -1,11 +1,9 @@
 import { useStore } from '../store/useStore';
 import { Link } from 'react-router-dom';
-import type { Match } from '../types';
 
 export default function RefereeDashboard() {
   const matches = useStore((state) => state.matches);
   const categories = useStore((state) => state.categories);
-  const currentUser = useStore((state) => state.currentUser);
 
   // Get matches assigned to this referee or all pending/in-progress matches
   const assignedMatches = matches.filter(

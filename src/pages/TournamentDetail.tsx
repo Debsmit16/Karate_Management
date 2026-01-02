@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
 import TeamLeaderboard from '../components/TeamLeaderboard';
-import type { Category, EventType } from '../types';
+import type { Category } from '../types';
 
 export default function TournamentDetail() {
   const { id } = useParams<{ id: string }>();

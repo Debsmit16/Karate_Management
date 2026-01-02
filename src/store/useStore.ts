@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import type {
   User,
-  UserRole,
   Tournament,
   Category,
   Athlete,

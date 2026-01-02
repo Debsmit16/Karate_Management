@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import type { Match, Athlete } from '../types';
 
 export default function CategoryDetail() {
   const { id } = useParams<{ id: string }>();
