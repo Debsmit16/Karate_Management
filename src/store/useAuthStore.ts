@@ -20,14 +20,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        // Fetch user profile from public.users table
+        // Fetch user profile from public.users table - use maybeSingle() to handle missing users
         const { data: userData, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (error) throw error;
+        if (error && error.code !== 'PGRST116') {
+          // PGRST116 = no rows returned, which is okay
+          throw error;
+        }
 
         if (userData) {
           set({
@@ -40,6 +43,9 @@ export const useAuthStore = create<AuthState>((set) => ({
             },
             loading: false,
           });
+        } else {
+          // User authenticated but no profile - set loading to false
+          set({ user: null, loading: false });
         }
       } else {
         set({ user: null, loading: false });
@@ -59,16 +65,52 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (error) throw error;
 
     if (data.user) {
-      // Fetch user profile
+      // Fetch user profile - use maybeSingle() to handle case where user doesn't exist
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
         .eq('id', data.user.id)
-        .single();
+        .maybeSingle();
 
-      if (userError) throw userError;
+      if (userError) {
+        // If user doesn't exist in users table, create a basic profile
+        if (userError.code === 'PGRST116') {
+          // User not found - create profile with default role
+          const { error: createError } = await supabase
+            .from('users')
+            .insert({
+              id: data.user.id,
+              email: data.user.email || email,
+              name: data.user.email?.split('@')[0] || 'User',
+              role: 'coach', // Default role
+            });
 
-      if (userData) {
+          if (createError) throw createError;
+
+          // Fetch the newly created user
+          const { data: newUserData, error: fetchError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', data.user.id)
+            .maybeSingle();
+
+          if (fetchError) throw fetchError;
+
+          if (newUserData) {
+            set({
+              user: {
+                id: newUserData.id,
+                name: newUserData.name,
+                email: newUserData.email,
+                role: newUserData.role,
+                teamId: newUserData.team_id || undefined,
+              },
+            });
+          }
+        } else {
+          throw userError;
+        }
+      } else if (userData) {
         set({
           user: {
             id: userData.id,
@@ -109,7 +151,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         .from('users')
         .select('*')
         .eq('id', authData.user.id)
-        .single();
+        .maybeSingle();
 
       if (fetchError) throw fetchError;
 
@@ -141,7 +183,7 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
       .from('users')
       .select('*')
       .eq('id', session.user.id)
-      .single();
+      .maybeSingle();
 
     if (userData) {
       useAuthStore.getState().user = {
@@ -151,6 +193,8 @@ supabase.auth.onAuthStateChange(async (_event, session) => {
         role: userData.role,
         teamId: userData.team_id || undefined,
       };
+    } else {
+      useAuthStore.getState().user = null;
     }
   } else {
     useAuthStore.getState().user = null;
